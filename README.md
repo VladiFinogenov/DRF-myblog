@@ -50,6 +50,14 @@ docker compose up --build
 docker compose run web python manage.py createsuperuser
 ```
 
+# Запуск тестов
+
+`Запустите проект через docker compose см. шаг 4, откройте второй терминал и введите команду`
+
+```bash
+docker compose run web python manage.py test
+```
+
 # RESTAPI Docs
 `Документация по пользовательскому интерфейсу Swagger:` http://127.0.0.1:8000/api/docs/
 
