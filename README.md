@@ -50,4 +50,5 @@ docker compose run web python manage.py createsuperuser
 
 # RESTAPI Docs
 `Документация по пользовательскому интерфейсу Swagger: (http://127.0.0.1:8000/api/docs/)`
-`При работе с API в браузере вы можете войти в систему по ссылке http://127.0.0.1:8000/api-auth/.`
+
+`При работе с API в браузере вы можете войти в систему по ссылке http://127.0.0.1:8000/api-auth/`
