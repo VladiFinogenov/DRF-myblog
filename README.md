@@ -42,6 +42,20 @@ docker compose up --build
 
 `❗ В контейнере автоматически запустятся миграции и сборка статики`
 
+## Шаг 5: Создание миграций и статики
+
+* `Создайте миграции с помошью команд:`
+```bash
+docker compose run web python manage.py makemigrations
+```
+```bash
+docker compose run web python manage.py migrate
+```
+* `Загрузите статику с помошью команды:`
+```bash
+docker compose run web python manage.py collectstatic --noinput
+```
+
 ## Шаг 5: Создание суперпользователя
 
 `Создайте суперпользователя для доступа к административной панели:`
