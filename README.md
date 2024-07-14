@@ -16,8 +16,18 @@ cd DRF-myblog
 
 ## Шаг 3: Настройка переменных окружения
 
+`Создайте файл .env в корневой директории проекта и добавьте в него необходимые переменные окружения. Для этого скопируйте и заполните из empty_env переменные. Пример:`
+```bash
+DEBUG = True
+SECRET_KEY = 'django-insecure-xxxxxxxxxxxx'
+DJANGO_ALLOWED_HOSTS = '127.0.0.1'
+CSRF_TRUSTED_ORIGINS = 'http://127.0.0.1'
+INTERNAL_IPS = '127.0.0.1'
 
-
+POSTGRES_USER = 'blog'
+POSTGRES_PASSWORD = 'new_password'
+POSTGRES_DB = 'your_database'
+```
 ## Шаг 4: Сборка и запуск контейнеров Docker
 
 `Соберите и запустите контейнеры Docker с помощью docker-compose:`
