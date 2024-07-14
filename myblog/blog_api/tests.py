@@ -1,51 +1,59 @@
-from django.contrib.auth.models import User
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
+from django.urls import reverse
 from rest_framework import status
 from .models import Post
+from django.contrib.auth.models import User
 
 
 class BlogPostTests(APITestCase):
-
     def setUp(self):
+        self.client = APIClient(enforce_csrf_checks=True)
+        self.user = User.objects.create_user(username='user1', password='password1')
+        self.client.force_authenticate(user=self.user)
+        self.post_url = reverse('post-list-create')
+
+    def test_create_update_delete_post(self):
         """
-        Настройка тестового пользователя.
+        Тест для проверки создания, изменения, и удаления поста.
         """
 
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.client.login(username='testuser', password='testpassword')
-
-    def test_create_post(self):
-        """
-        Тест создания новой записи блога.
-        """
-
-        data = {'title': 'Test Post', 'content': 'Test Content', 'is_published': True}
-        response = self.client.post('/api/v1/posts/', data)
+        # Создание поста
+        data = {'title': 'Test Post', 'content': 'Test Content'}
+        response = self.client.post(self.post_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_get_posts(self):
-        """
-        Тест получения списка записей блога.
-        """
-
-        response = self.client.get('/api/v1/posts/')
+        # Обновление поста
+        post_id = response.data['id']
+        update_url = reverse('post_detail', kwargs={'pk': post_id})
+        updated_data = {'title': 'Updated Post', 'content': 'Updated Content'}
+        response = self.client.put(update_url, updated_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_update_post(self):
-        """
-        Тест обновления записи блога.
-        """
-
-        post = Post.objects.create(user=self.user, title='Test Post', content='Test Content', is_published=True)
-        data = {'title': 'Updated Post', 'content': 'Updated Content', 'is_published': False}
-        response = self.client.put(f'/api/v1/posts/{post.slug}/', data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_delete_post(self):
-        """
-        Тест удаления записи блога.
-        """
-
-        post = Post.objects.create(user=self.user, title='Test Post', content='Test Content', is_published=True)
-        response = self.client.delete(f'/api/v1/posts/{post.slug}/')
+        # Удаление поста
+        response = self.client.delete(update_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_user_cannot_modify_or_delete_post(self):
+        """
+        Тест проверяет, может ли другой пользователь изменять или удалять запись поста.
+        """
+
+        # Создание поста
+        data = {'title': 'Test Post', 'content': 'Test Content'}
+        response = self.client.post(self.post_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Попытка другого пользователя изменить или удалить пост
+        post_id = response.data['id']
+        update_url = reverse('post_detail', kwargs={'pk': post_id})
+        user2 = User.objects.create_user(username='user2', password='password2')
+        self.client.force_authenticate(user=user2)
+
+        # Попытка изменить пост
+        updated_data = {'title': 'Updated Post', 'content': 'Updated Content'}
+        response = self.client.put(update_url, updated_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Попытка удалить пост
+        response = self.client.delete(update_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

@@ -63,6 +63,7 @@ class PostDetail(APIView):
         """
 
         post = self.get_object(pk)
+        self.check_object_permissions(request, post)
         serializer = PostSerializer(post, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -75,6 +76,7 @@ class PostDetail(APIView):
         """
 
         post = self.get_object(pk)
+        self.check_object_permissions(request, post)
         serializer = PostSerializer(post,
                                     data=request.data,
                                     partial=True)
@@ -88,6 +90,7 @@ class PostDetail(APIView):
         Удаляет запись блога.
         """
 
-        queryset = self.get_object(pk)
-        queryset.delete()
+        post = self.get_object(pk)
+        self.check_object_permissions(request, post)
+        post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
