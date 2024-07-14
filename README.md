@@ -40,9 +40,9 @@ docker compose up --build
 ```
 `Эта команда соберет образы Docker и запустит контейнеры в соответствии с конфигурацией, указанной в файле docker-compose.yml.`
 
-## Шаг 5: Создание миграций и статики
+## Шаг 5: Создание миграций
 
-* `Создайте миграции с помошью команд:`
+`Создайте миграции с помошью команд:`
 ```bash
 docker compose run web python manage.py makemigrations
 ```
@@ -52,7 +52,7 @@ docker compose run web python manage.py migrate
 
 ## Шаг 6: Сборка статики
 
-* `Загрузите статику с помошью команды:`
+`Загрузите статику с помошью команды:`
 ```bash
 docker compose run web python manage.py collectstatic --noinput
 ```
